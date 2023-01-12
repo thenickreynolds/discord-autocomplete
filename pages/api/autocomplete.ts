@@ -3,6 +3,18 @@ import axios from "axios";
 
 const key = process.env.MAPS_API_KEY;
 
+function allowCors(res: NextApiResponse) {
+  res.setHeader('Access-Control-Allow-Credentials', "true")
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  // another common pattern
+  // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -22,6 +34,7 @@ export default async function handler(
     }
 }).then(r => r.data).then(data => {
     const responseData = data.predictions ? data.predictions.map((item) => ({ place_id: item.place_id, ...item.structured_formatting })) : data;
+    allowCors(res);
     res.status(200).json(responseData);
   }).catch(e=> {
     res.status(500).json({ error: e.toString() })
