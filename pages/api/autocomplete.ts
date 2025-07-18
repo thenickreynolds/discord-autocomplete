@@ -20,7 +20,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { q } = req.query;
-  const queryString = (q as string).trim();
+  const queryString = q ? (q as string).trim() : '';
   if (!queryString || queryString.length === 0) {
     res.status(500).json({ error: "Invalid query" });
     return;
